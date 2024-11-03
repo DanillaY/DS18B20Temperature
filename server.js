@@ -8,7 +8,7 @@ app.use(express.json());
 
 function checkIfResultIsEmpty(data, queryDB,err) {
 
-	if(data == undefined || err) {
+	if(data == undefined || err || data == 'thers no data in the database') {
 		return true;
 	}
 
@@ -124,7 +124,7 @@ app.get('/medianTempCurrentMonth', async (req,res) => {
 	temperatureData = await fetch(`http://localhost:3210/allTempInSetMonth?month=${currentMonth}&orderBy=temp`).then((result) => result.json());
 	
 	if(checkIfResultIsEmpty(count,'','') || checkIfResultIsEmpty(temperatureData,'',''))
-		res.json('thers no data in the database');
+		return res.json('thers no data in the database');
 	
 	if(count[0].rowsCount % 2 == 0){
 		sum = 0
