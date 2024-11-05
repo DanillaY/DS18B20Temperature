@@ -59,5 +59,5 @@ void loop() {
     http.end();
   }
 
-  delay(1800000); //30 min
+  delay(1800); //30 min
 }
