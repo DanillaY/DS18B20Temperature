@@ -42,7 +42,7 @@ function App() {
 		<div>
 			<div class='grid'>
 				<h4>{ avgTemp.avgTempThisMonth === undefined ? 'Loading data...' : `Average temperature in this month ${avgTemp.avgTempThisMonth} °C`}</h4>
-				<h4>{ medianTempThisMonth.medianTemp === undefined ? JSON.stringify(medianTempThisMonth.medianTemp) : `Median temperature for this month ${medianTempThisMonth.medianTemp} °C`}</h4>
+				<h4>{ medianTempThisMonth.medianTemp === undefined ? 'Loading data...' : `Median temperature for this month ${medianTempThisMonth.medianTemp} °C`}</h4>
 			</div>
 			
 			<ApiChartResult data={graphData} textTitle='Temperature for today'/>

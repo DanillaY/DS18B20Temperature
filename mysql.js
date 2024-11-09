@@ -1,12 +1,11 @@
 const mysql = require('mysql2');
-const dotenv = require('dotenv');
-dotenv.config();
+const env = require('./env');
 
 const dbConnection = mysql.createConnection({
-	host: process.env.MYSQL_SERVICE,
-	user: process.env.MYSQL_USER,
-	password: process.env.MYSQL_PASSWORD,
-	port: process.env.MYSQL_PORT,
+	host: env.mysqlService,
+	user: env.mysqlUser,
+	password: env.mysqlPassword,
+	port: env.mysqlPort,
 	waitForConnections: true,
 	maxIdle: 10,
 	multipleStatements: true
@@ -133,7 +132,7 @@ module.exports.currentTemp = async function currentTemp(date,last) {
 
 	return await executeDBQeuryPromise(queryDB,[date.getFullYear(), date.getMonth()+1, date.getDate()]).then((result) => {
 		if(checkIfResultIsEmpty(result, queryDB,null))
-			return res.json('thers no data in the database');
+			return 'thers no data in the database';
 		
 		return last == 'true' ? tempDataToJSONChart(result[0]) :
 			result.map( temp => tempDataToJSONChart(temp));
