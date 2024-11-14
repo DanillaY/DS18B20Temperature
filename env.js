@@ -11,5 +11,6 @@ mysqlPort = isEmptyOrUndefined(process.env.MYSQL_PORT,'MYSQL_PORT');
 
 serverIp = isEmptyOrUndefined(process.env.SERVER_IP,'SERVER_IP');
 serverPort = isEmptyOrUndefined(process.env.SERVER_PORT,'SERVER_PORT');
+const apiPath = serverIp+`:`+serverPort;
 
-module.exports = { mysqlService, mysqlUser, mysqlPassword, mysqlPort, serverIp, serverPort };
+module.exports = { mysqlService, mysqlUser, mysqlPassword, mysqlPort, serverIp, serverPort, apiPath};

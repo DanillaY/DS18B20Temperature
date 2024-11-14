@@ -38,8 +38,8 @@ app.get('/tempCountSetMonth', (req,res) => {
 
 app.get('/medianTempCurrentMonth', async (req,res) => {
 	currentMonth = new Date().getMonth()+1; 
-	count = await fetch(`http://`+env.serverIp+`:`+env.serverPort+`/tempCountSetMonth?month=${currentMonth}`).then(result => result.json());
-	temperatureData = await fetch(`http://`+env.serverIp+`:`+env.serverPort+`/allTempInSetMonth?month=${currentMonth}&orderBy=temp`).then(result => result.json());
+	count = await fetch(`http://${env.apiPath}/tempCountSetMonth?month=${currentMonth}`).then(result => result.json());
+	temperatureData = await fetch(`http://${env.apiPath}/allTempInSetMonth?month=${currentMonth}&orderBy=temp`).then(result => result.json());
 	
 	return mysql.medianTempCurrentMonth(currentMonth, count, temperatureData).then(result => res.json(result));
 });

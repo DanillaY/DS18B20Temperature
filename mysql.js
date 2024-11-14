@@ -13,7 +13,7 @@ const dbConnection = mysql.createConnection({
 
 function checkIfResultIsEmpty(data, queryDB,err) {
 
-	if(data == undefined || err || data == 'thers no data in the database') {
+	if(data === undefined || data === null || err || data == 'thers no data in the database') {
 		return true;
 	}
 
@@ -22,7 +22,7 @@ function checkIfResultIsEmpty(data, queryDB,err) {
 		return true;
 	}
 
-	if(Object.values(data[0]).some(temp=> temp === null || temp === '')) {
+	if(Object.values(data[0]).some(temp=> temp === null || temp === '' || temp === 0)) {
 		console.log(`no data in the database with query - ${queryDB}`);
 		return true;
 	}
@@ -45,7 +45,6 @@ async function executeDBQeuryPromise(queryDB,params) {
 	})
 }
 
-
 async function initTemperatureDatabase() {
 	const queryDB = 'CREATE SCHEMA IF NOT EXISTS `temperature`; \
 	USE `temperature`; \
@@ -61,27 +60,27 @@ async function initTemperatureDatabase() {
 }
 
 module.exports.getAvgTempAll = async function getAvgTempAll() {
-	const queryDB = 'SELECT ROUND(AVG(temperature.temperaturedata.temperature),2) FROM temperature.temperaturedata;';
+	const queryDB = 'SELECT ROUND(AVG(temperature.temperaturedata.temperature),2) as avgTemp FROM temperature.temperaturedata;';
 
 	return await executeDBQeuryPromise(queryDB,null).then(result => {
 		if (checkIfResultIsEmpty(result, queryDB,null))
-			return 'thers no data in the database';
-		else
-			return {'avgTempAll':result[0]['ROUND(AVG(temperature.temperaturedata.temperature),2)']};
+			return {'avgTempThisMonth':0};
+		
+		return {'avgTempAll':result[0]['avgTemp']};
 	});
 }
 
 module.exports.avgTempThisMonth = async function avgTempThisMonth(date) {
-	const queryDB = 'SELECT ROUND(AVG(temperature.temperaturedata.temperature),2) \
+	const queryDB = 'SELECT ROUND(AVG(temperature.temperaturedata.temperature),2) as avgTemp \
 					FROM temperature.temperaturedata \
 					WHERE MONTH(temperature.temperaturedata.createdDate) = ? \
 					AND YEAR(temperature.temperaturedata.createdDate) = ?;';
 
 	return await executeDBQeuryPromise(queryDB,[date.getMonth()+1,date.getFullYear()]).then(result => {
 		if(checkIfResultIsEmpty(result, queryDB,null))
-			return 'no data in the database';
+			return {'avgTempThisMonth':0};
 		
-		return {'avgTempThisMonth':result[0]['ROUND(AVG(temperature.temperaturedata.temperature),2)']};
+		return {'avgTempThisMonth':result[0]['avgTemp']};
 	});
 }
 
@@ -93,20 +92,21 @@ module.exports.tempCountSetMonth = async function tempCountSetMonth(year,month) 
 
 	return await executeDBQeuryPromise(queryDB,[year,month]).then(result => {
 		if(checkIfResultIsEmpty(result, queryDB,null))
-			return 'thers no data in the database';
+			return {"rowsCount": 0};
 		
-		return result;
+		return result[0];
 	});
 }
 
 module.exports.medianTempCurrentMonth = async function medianTempCurrentMonth(currentMonth, count, temperatureData) {
-	if(checkIfResultIsEmpty(count,'','') || checkIfResultIsEmpty(temperatureData,'',''))
-		return 'thers no data in the database';
 	
-	if(count[0].rowsCount % 2 == 0){
+	if(count == { rowsCount: 0 } || checkIfResultIsEmpty(temperatureData,'',''))
+		return {'medianTemp': 0};
+	
+	if(count.rowsCount % 2 == 0){
 		sum = 0
 		temperatureData.forEach((temperature,index )=> {
-			if(index == Math.floor(count[0].rowsCount/2)-1 || index == Math.floor(count[0].rowsCount/2)){
+			if(index == Math.floor(count.rowsCount/2)-1 || index == Math.floor(count.rowsCount/2)){
 				sum += temperature.y;
 			}
 		});
@@ -116,7 +116,7 @@ module.exports.medianTempCurrentMonth = async function medianTempCurrentMonth(cu
 	else{
 		result = 0
 		temperatureData.forEach((temperature,index )=> {
-			if(index == Math.floor(count[0].rowsCount/2))
+			if(index == Math.floor(count.rowsCount/2))
 				result = temperature.y
 		})
 		return {'medianTemp':result};
@@ -132,7 +132,7 @@ module.exports.currentTemp = async function currentTemp(date,last) {
 
 	return await executeDBQeuryPromise(queryDB,[date.getFullYear(), date.getMonth()+1, date.getDate()]).then((result) => {
 		if(checkIfResultIsEmpty(result, queryDB,null))
-			return 'thers no data in the database';
+			return {'label': '' , 'y': 0.0 };
 		
 		return last == 'true' ? tempDataToJSONChart(result[0]) :
 			result.map( temp => tempDataToJSONChart(temp));
@@ -148,7 +148,7 @@ module.exports.allTempInSetMonth = async function allTempInSetMonth(year, month,
 
 	return await executeDBQeuryPromise(queryDB,[year, month]).then((result) => {
 		if(checkIfResultIsEmpty(result, queryDB,null))
-			return 'thers no data in the database';
+			return [{ 'label': '','y': 0.0}];
 		
 		return result.map( temp => tempDataToJSONChart(temp));
 	});
