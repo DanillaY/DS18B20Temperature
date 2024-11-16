@@ -1,5 +1,6 @@
 const mysql = require('mysql2');
 const env = require('./env');
+const logger = require('./winstonLogger');
 
 const dbConnection = mysql.createConnection({
 	host: env.mysqlService,
@@ -18,12 +19,12 @@ function checkIfResultIsEmpty(data, queryDB,err) {
 	}
 
 	if(data.length == 0) {
-		console.log(`no result with the set query - ${queryDB}`);
+		logger.warn(new Error(`no result with the set query - ${queryDB}`));
 		return true;
 	}
 
 	if(Object.values(data[0]).some(temp=> temp === null || temp === '' || temp === 0)) {
-		console.log(`no data in the database with query - ${queryDB}`);
+		logger.warn(new Error(`no data in the database with query - ${queryDB}`));
 		return true;
 	}
 
@@ -34,7 +35,7 @@ function tempDataToJSONChart(temp) {
 	return { label: temp.createdDate.toLocaleString('en-us', {weekday:'long'}) +
 			' ' + temp.createdDate.getHours()+ ':' +
 			(temp.createdDate.getMinutes() < 10 ? '0' : '') + temp.createdDate.getMinutes(),
-			y: temp.temperature }; 
+			y: temp.temperature, markerColor: 'white' }; 
 }
 
 async function executeDBQeuryPromise(queryDB,params) {
@@ -55,7 +56,7 @@ async function initTemperatureDatabase() {
 
 	dbConnection.query(queryDB,(err,data) => {
 		if(err)
-			console.log(err);
+			logger.error(new Error(err));
 	});
 }
 
@@ -132,7 +133,7 @@ module.exports.currentTemp = async function currentTemp(date,last) {
 
 	return await executeDBQeuryPromise(queryDB,[date.getFullYear(), date.getMonth()+1, date.getDate()]).then((result) => {
 		if(checkIfResultIsEmpty(result, queryDB,null))
-			return {'label': '' , 'y': 0.0 };
+			return {'label': '' , 'y': 0.0, markerColor: 'white' };
 		
 		return last == 'true' ? tempDataToJSONChart(result[0]) :
 			result.map( temp => tempDataToJSONChart(temp));

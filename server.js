@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const  mysql = require('./mysql');
 const env = require('./env');
+const logger = require('./winstonLogger');
 
 const app = express();
 app.use(cors());
@@ -51,5 +52,5 @@ app.post('/addTempToDB', (req,res) => {
 
 
 app.listen(3210,() => {
-	console.log('Server started on port 3210');
+	logger.log('info','Server started on port 3210');
 });

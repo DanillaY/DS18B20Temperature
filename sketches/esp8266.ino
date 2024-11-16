@@ -35,7 +35,7 @@ void loop() {
     WiFiClient client;
     HTTPClient http;
 
-    http.begin(client, "http://" SERVER_IP "/addTempToDB/");  // HTTP
+    http.begin(client, "http://" SERVER_IP "/addTempToDB/");
     http.addHeader("Content-Type", "application/json");
 
     Serial.print("[HTTP] POST...\n");

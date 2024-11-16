@@ -3,6 +3,17 @@
 	grid-template-columns: repeat(2, 1fr);
 }
 
+.mainPage {
+	background-color: black;
+	height:100vh
+}
+
+.chart {
+  	padding-left:5%;
+	padding-right: 5%;
+}
+
 h4{
+	color: white;
 	text-align: center;
 }

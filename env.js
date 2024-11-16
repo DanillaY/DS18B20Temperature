@@ -1,8 +1,9 @@
 const dotenv = require('dotenv');
+const logger = require('./winstonLogger');
 dotenv.config();
 
 const isEmptyOrUndefined = (varValue,varName) =>
-	varValue === undefined || varValue == '' ? console.log(varName + ' is not set') : varValue;
+	varValue === undefined || varValue == '' ? logger.warn(new Error(varName + ' is not set')) : varValue;
 
 mysqlService = isEmptyOrUndefined(process.env.MYSQL_SERVICE,'MYSQL_SERVICE');
 mysqlUser = isEmptyOrUndefined(process.env.MYSQL_USER,'MYSQL_USER');
