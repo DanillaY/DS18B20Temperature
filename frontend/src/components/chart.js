@@ -4,10 +4,10 @@ var CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
 function Chart({ data,textTitle }) {
 	const options = {
-		backgroundColor: "black",
+		backgroundColor: "#101010",
 		animationEnabled: true,
 		exportEnabled: false,
-		//theme: "light2",
+		height: 450,
 		title:{
 			text: textTitle,
 			fontColor: "white",
@@ -15,13 +15,10 @@ function Chart({ data,textTitle }) {
 		axisX: {
 			lineColor: "white",
 			labelFontColor: "white",
-			lineColor: "white",
-			labelFontColor: "white",
 		},
 		axisY: {
 			includeZero: false,
 			lineColor: "white",
-			labelFontColor: "white",
 			valueFormatString:"## °C",
 			labelFontColor: "white",
 		},
@@ -29,7 +26,7 @@ function Chart({ data,textTitle }) {
 			type: "line",
 			xValueFormatString: "HH mm",
 			indexLabel: "{y}",
-			indexLabelFontColor: "#5A5757",
+			indexLabelFontColor: "white",
 			indexLabelPlacement: "outside",
 			dataPoints: data,
 			lineColor: "white",
@@ -37,10 +34,10 @@ function Chart({ data,textTitle }) {
 	}
 
 	return (
-		<div class='chart'>
+		<div className='chart'>
 			<CanvasJSChart options = {options}/>
 		</div>
-	)
+	);
 }
 
-export default Chart
+export default Chart;

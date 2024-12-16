@@ -12,19 +12,19 @@ const dbConnection = mysql.createConnection({
 	multipleStatements: true
 });
 
-function checkIfResultIsEmpty(data, queryDB,err) {
+function checkIfResultIsEmpty(data, err) {
 
-	if(data === undefined || data === null || err || data == 'thers no data in the database') {
+	if(data === undefined || data === null || err) {
 		return true;
 	}
 
 	if(data.length == 0) {
-		logger.warn(new Error(`no result with the set query - ${queryDB}`));
+		logger.warn(new Error(`no result with the previous query`));
 		return true;
 	}
 
 	if(Object.values(data[0]).some(temp=> temp === null || temp === '' || temp === 0)) {
-		logger.warn(new Error(`no data in the database with query - ${queryDB}`));
+		logger.warn(new Error(`no result with the previous query`));
 		return true;
 	}
 
@@ -64,7 +64,7 @@ module.exports.getAvgTempAll = async function getAvgTempAll() {
 	const queryDB = 'SELECT ROUND(AVG(temperature.temperaturedata.temperature),2) as avgTemp FROM temperature.temperaturedata;';
 
 	return await executeDBQeuryPromise(queryDB,null).then(result => {
-		if (checkIfResultIsEmpty(result, queryDB,null))
+		if (checkIfResultIsEmpty(result, null))
 			return {'avgTempThisMonth':0};
 		
 		return {'avgTempAll':result[0]['avgTemp']};
@@ -78,7 +78,7 @@ module.exports.avgTempThisMonth = async function avgTempThisMonth(date) {
 					AND YEAR(temperature.temperaturedata.createdDate) = ?;';
 
 	return await executeDBQeuryPromise(queryDB,[date.getMonth()+1,date.getFullYear()]).then(result => {
-		if(checkIfResultIsEmpty(result, queryDB,null))
+		if(checkIfResultIsEmpty(result, null))
 			return {'avgTempThisMonth':0};
 		
 		return {'avgTempThisMonth':result[0]['avgTemp']};
@@ -92,7 +92,7 @@ module.exports.tempCountSetMonth = async function tempCountSetMonth(year,month) 
 				MONTH(temperature.temperaturedata.createdDate) = ?;';
 
 	return await executeDBQeuryPromise(queryDB,[year,month]).then(result => {
-		if(checkIfResultIsEmpty(result, queryDB,null))
+		if(checkIfResultIsEmpty(result, null))
 			return {"rowsCount": 0};
 		
 		return result[0];
@@ -132,7 +132,7 @@ module.exports.currentTemp = async function currentTemp(date,last) {
 					${last == 'true' ? 'ORDER BY temperature.temperaturedata.ID DESC LIMIT 1;' : ';'}`;
 
 	return await executeDBQeuryPromise(queryDB,[date.getFullYear(), date.getMonth()+1, date.getDate()]).then((result) => {
-		if(checkIfResultIsEmpty(result, queryDB,null))
+		if(checkIfResultIsEmpty(result, null))
 			return {'label': '' , 'y': 0.0, markerColor: 'white' };
 		
 		return last == 'true' ? tempDataToJSONChart(result[0]) :
@@ -148,7 +148,7 @@ module.exports.allTempInSetMonth = async function allTempInSetMonth(year, month,
 					'ORDER BY temperature.temperaturedata.temperature;'}`;
 
 	return await executeDBQeuryPromise(queryDB,[year, month]).then((result) => {
-		if(checkIfResultIsEmpty(result, queryDB,null))
+		if(checkIfResultIsEmpty(result, null))
 			return [{ 'label': '','y': 0.0}];
 		
 		return result.map( temp => tempDataToJSONChart(temp));
@@ -156,6 +156,10 @@ module.exports.allTempInSetMonth = async function allTempInSetMonth(year, month,
 }
 
 module.exports.addTempToDb = async function addTempToDb(temperature) {
+
+	if(temperature == undefined || temperature == null)
+		return 'Temperature value was not set'
+
 	const queryDB = 'INSERT INTO temperature.temperaturedata (temperature) VALUES (?);'
 
 	return await executeDBQeuryPromise(queryDB,[temperature]).then(() => {

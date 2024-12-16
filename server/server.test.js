@@ -1,12 +1,6 @@
 //const server = require('./server');
 const env = require('./env');
 
-/*beforeEach(() => {
-	fetch.mockClear();
-});
-
-*/
-
 function setMockData(data) {
 	global.fetch = jest.fn(() =>
 		Promise.resolve({
