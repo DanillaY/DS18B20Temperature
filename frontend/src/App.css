@@ -1,0 +1,40 @@
+.grid {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+}
+
+.mainPage {
+	background-color: black;
+	height:100vh
+}
+
+.chart {
+  	padding-left:5%;
+	padding-right: 5%;
+}
+
+.canvasjs-chart-canvas {
+	border-radius: 0px 18px 18px 18px;
+}
+
+.button {
+	max-width: 180px;
+	min-height: 30px;
+	background-color: #101010;
+	border-radius: 10px 10px 0px 0px;
+	color: white;
+	margin-left: 5%;
+	text-align: center;
+	align-self: center;
+	cursor: pointer;
+	font-size: 15px;
+}
+
+.button:hover{
+	background-color: #5e5e5e;
+}
+
+h4{
+	color: white;
+	text-align: center;
+}

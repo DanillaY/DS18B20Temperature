@@ -1,0 +1,27 @@
+{
+  "name": "ds18b20_data",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+	"start": "node server.js"
+  },
+  "COMMENT_SECTION": {
+	"alternative start method (replace start in scripts with this)": "nodemon server.js",
+	"alternative start explained":"alternative start could not be run with concurrently so you have to either start server.js and react app separately in tmux or smth or use the api without nodemon with npm start in root dir"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1",
+    "jest": "^29.7.0",
+    "mysql2": "^3.11.3",
+    "nodemon": "^3.1.7",
+    "react-chartjs-2": "^5.2.0",
+    "winston": "^3.9.0"
+  }
+}
