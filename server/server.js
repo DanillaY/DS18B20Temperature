@@ -50,6 +50,20 @@ app.post('/addTempToDB', (req,res) => {
 	return database.addTempToDb(req.body.temperature).then(result => res.json(result));
 });
 
+// /currentVoltage requires a voltage value in body (type float)
+app.post('/currentVoltage', (req,res) => {
+
+	if(isNaN(parseFloat(req.body.currentVoltage)))
+		return res.status(500).send('Internal server error');
+	
+	maxPinVoltage = 3.5;
+	voltagePercent = (1- (maxPinVoltage - req.body.currentVoltage)/maxPinVoltage) * 100;
+	logger.info(`Current voltage: ${req.body.currentVoltage} v | at ${voltagePercent.toFixed(2)}%`);
+	
+	return res.status(200).send('Data logged successfully');
+
+});
+
 
 app.listen(3210,() => {
 	logger.log('info','Server started on port 3210');

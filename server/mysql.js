@@ -2,7 +2,7 @@ const mysql = require('mysql2');
 const env = require('./env');
 const logger = require('./winstonLogger');
 
-const dbConnection = mysql.createConnection({
+const dbConnection = mysql.createPool({
 	host: env.mysqlService,
 	user: env.mysqlUser,
 	password: env.mysqlPassword,

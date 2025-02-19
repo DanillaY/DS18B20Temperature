@@ -1,5 +1,4 @@
-const os = require('os');
-const database = os.platform() === 'win32' ? require('mysql2') : require('mariadb');
+const database = require('mysql2');
 const env = require('./env');
 const logger = require('./winstonLogger');
 
