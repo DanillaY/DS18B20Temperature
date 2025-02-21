@@ -56,9 +56,8 @@ app.post('/currentVoltage', (req,res) => {
 	if(isNaN(parseFloat(req.body.currentVoltage)))
 		return res.status(500).send('Internal server error');
 	
-	maxPinVoltage = 3.5;
-	voltagePercent = (1- (maxPinVoltage - req.body.currentVoltage)/maxPinVoltage) * 100;
-	logger.info(`Current voltage: ${req.body.currentVoltage} v | at ${voltagePercent.toFixed(2)}%`);
+	voltagePercent = (1- (env.maxBatteryVoltage - req.body.currentVoltage) / env.maxBatteryVoltage) * 100;
+	logger.info(`Current voltage: ${req.body.currentVoltage} ± 0.2 v | at ${voltagePercent.toFixed(2)}%`);
 	
 	return res.status(200).send('Data logged successfully');
 

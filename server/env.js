@@ -12,6 +12,8 @@ databasePort = isEmptyOrUndefined(process.env.DATABASE_PORT,'DATABASE_PORT');
 
 serverIp = isEmptyOrUndefined(process.env.SERVER_IP,'SERVER_IP');
 serverPort = isEmptyOrUndefined(process.env.SERVER_PORT,'SERVER_PORT');
+
+maxBatteryVoltage = isEmptyOrUndefined(process.env.MAX_BATTERY_VOLTAGE,'MAX_BATTERY_VOLTAGE');
 const apiPath = serverIp+`:`+serverPort;
 
-module.exports = { databaseService, databaseUser, databasePassword, databasePort, serverIp, serverPort, apiPath};
+module.exports = { databaseService, databaseUser, databasePassword, databasePort, serverIp, serverPort, apiPath, maxBatteryVoltage};

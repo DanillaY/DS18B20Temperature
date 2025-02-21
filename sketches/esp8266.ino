@@ -26,14 +26,19 @@ void setup() {
 
 void loop() {
 
+	//read temperature data from the sensor and send the post request with that data
 	sensors.requestTemperatures();
 	float tempC = sensors.getTempCByIndex(0);
 	String jsonTemperature = "{\"temperature\": " + String(tempC) + "}";
 	sendPostRequest(String("/addTempToDB/"),jsonTemperature);
 
+  	delay(1000);
+
+	//read voltage value from analog pin, convert analog value to volts and send post request 
 	int adcValue = analogRead(ANALOG_VOLTAGE_PIN);
-    float voltageA0 = adcValue * (3.3 / 1023.0);
-	String jsonVoltage = "{\"currentVoltage\": " + String(voltageA0) + "}";
+  	float voltageWihoutVoltageDivider = adcValue * (3.3 / 1023.0);
+	float voltageWithVoltageDivider = voltageWihoutVoltageDivider * 2; //im using two 5,1 kOhm resistors for the voltage divider so you might need to adjust this value if you are using different (uneven) resistors
+	String jsonVoltage = "{\"currentVoltage\": " + String(voltageWithVoltageDivider) + "}";
 	sendPostRequest(String("/currentVoltage/"),jsonVoltage);
 
 	delay(sleepDurationMinute);
@@ -50,8 +55,7 @@ void sendPostRequest(String api_path,String jsonResult) {
 		WiFiClient client;
 		HTTPClient http;
 
-		//http.begin(client, "http://" SERVER_IP "/addTempToDB/");
-		http.begin(client, "http://" SERVER_IP api_path);
+		http.begin(client, "http://" SERVER_IP + api_path);
 		http.addHeader("Content-Type", "application/json");
 
 		Serial.print("[HTTP] POST...\n");
@@ -63,7 +67,7 @@ void sendPostRequest(String api_path,String jsonResult) {
 			Serial.println("received payload: "+ payload);
 
 		} else {
-		Serial.printf("[HTTP] POST... failed, error: %s\n", http.errorToString(httpCode).c_str());
+		  Serial.printf("[HTTP] POST... failed, error: %s\n", http.errorToString(httpCode).c_str());
 		}
 
 		http.end();
