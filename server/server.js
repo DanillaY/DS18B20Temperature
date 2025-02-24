@@ -64,6 +64,6 @@ app.post('/currentVoltage', (req,res) => {
 });
 
 
-app.listen(3210,() => {
-	logger.log('info','Server started on port 3210');
+app.listen(env.serverPort,() => {
+	logger.log('info',`Server started on port ${env.serverPort}`);
 });
