@@ -18,6 +18,7 @@ DallasTemperature sensors(&oneWire);
 
 const unsigned short int sleepMinute = 60000;
 const unsigned long sleepDurationMinute = sleepMinute * 30;
+const float maxBatteryVoltage = 4; //change this value if you have a different power supply voltage
 
 void setup() {
   Serial.begin(115200);
@@ -35,8 +36,8 @@ void loop() {
   	delay(1000);
 
 	//read voltage value from analog pin, convert analog value to volts and send post request 
-	int adcValue = analogRead(ANALOG_VOLTAGE_PIN);
-  	float voltageWihoutVoltageDivider = adcValue * (3.3 / 1023.0);
+	int adcValue = getAvgADCValue(3);
+  	float voltageWihoutVoltageDivider = adcValue * (maxBatteryVoltage / 1023.0);
 	float voltageWithVoltageDivider = voltageWihoutVoltageDivider * 2; //im using two 5,1 kOhm resistors for the voltage divider so you might need to adjust this value if you are using different (uneven) resistors
 	String jsonVoltage = "{\"currentVoltage\": " + String(voltageWithVoltageDivider) + "}";
 	sendPostRequest(String("/currentVoltage/"),jsonVoltage);
@@ -76,6 +77,15 @@ void sendPostRequest(String api_path,String jsonResult) {
 	//ESP.deepSleep(sleepDurationMicroseconds); use this instead of the code below if your esp has the correct deep sleep functions
 	WiFi.disconnect();
 	WiFi.forceSleepBegin();
+}
+
+int getAvgADCValue(int precision) {
+	int totalAdcValue = 0;
+	for(int i = 0 ; i < precision ;i++) {
+		totalAdcValue += analogRead(ANALOG_VOLTAGE_PIN);
+	}
+	
+	return total / precision;
 }
 
 void connectToWifi() {
